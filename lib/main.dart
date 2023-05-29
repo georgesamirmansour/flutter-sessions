@@ -5,7 +5,17 @@ import 'package:second_week/ui/modules/data/home_provider.dart';
 import 'package:second_week/ui/modules/data/second_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(
+      create: (context) => AppHelper(),
+    ),
+    ChangeNotifierProvider(
+      create: (context) => SecondProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (context) => HomeProvider(),
+    )
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -13,22 +23,17 @@ class MyApp extends StatelessWidget {
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) => MultiProvider(
-    providers: [
-      Provider(create: (context) => AppHelper(),),
-      Provider(create: (context) => SecondProvider(),),
-      Provider(create: (context) => HomeProvider(),)
-    ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        locale: Locale(context.watch<AppHelper>().lang),
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
+  Widget build(BuildContext context) => Consumer<AppHelper>(
+        builder: (context, appHelper, child) => MaterialApp(
+          title: 'Flutter Demo',
+          locale: Locale(appHelper.lang),
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            useMaterial3: true,
+          ),
+          home: const MyHomePage(title: 'Flutter Demo Home Page'),
         ),
-        home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      ),
-    );
+      );
 }
 
 class MyHomePage extends StatefulWidget {
@@ -50,7 +55,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   void _incrementCounter() {
     // setState(() {
     //   // This call to setState tells the Flutter framework that something has
@@ -60,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
     //   // called again, and so nothing would appear to happen.
     //   _counter++;
     // });
-    HomeProvider().increment();
+    Provider.of<HomeProvider>(context, listen: false).increment();
   }
 
   @override
@@ -103,9 +107,11 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            Text(
-              '${context.watch<HomeProvider>().counter}',
-              style: Theme.of(context).textTheme.headlineMedium,
+            Consumer<HomeProvider>(
+              builder: (context, value, child) => Text(
+                '${value.counter}',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
             ),
           ],
         ),
