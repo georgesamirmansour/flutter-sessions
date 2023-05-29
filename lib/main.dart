@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:second_week/ui/modules/data/app_helper.dart';
+import 'package:second_week/ui/modules/data/home_provider.dart';
+import 'package:second_week/ui/modules/data/second_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,17 +13,22 @@ class MyApp extends StatelessWidget {
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+  Widget build(BuildContext context) => MultiProvider(
+    providers: [
+      Provider(create: (context) => AppHelper(),),
+      Provider(create: (context) => SecondProvider(),),
+      Provider(create: (context) => HomeProvider(),)
+    ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        locale: Locale(context.watch<AppHelper>().lang),
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
-  }
 }
 
 class MyHomePage extends StatefulWidget {
@@ -41,17 +50,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
   void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+    // setState(() {
+    //   // This call to setState tells the Flutter framework that something has
+    //   // changed in this State, which causes it to rerun the build method below
+    //   // so that the display can reflect the updated values. If we changed
+    //   // _counter without calling setState(), then the build method would not be
+    //   // called again, and so nothing would appear to happen.
+    //   _counter++;
+    // });
+    HomeProvider().increment();
   }
 
   @override
@@ -95,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'You have pushed the button this many times:',
             ),
             Text(
-              '$_counter',
+              '${context.watch<HomeProvider>().counter}',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
