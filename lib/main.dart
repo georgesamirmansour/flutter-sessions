@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:second_week/ui/modules/data/app_helper.dart';
 import 'package:second_week/ui/modules/data/home_provider.dart';
 import 'package:second_week/ui/modules/data/second_provider.dart';
+
+import 'generated/l10n.dart';
 
 void main() {
   runApp(MultiProvider(providers: [
@@ -27,11 +30,18 @@ class MyApp extends StatelessWidget {
         builder: (context, appHelper, child) => MaterialApp(
           title: 'Flutter Demo',
           locale: Locale(appHelper.lang),
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
-          home: const MyHomePage(title: 'Flutter Demo Home Page'),
+          home: const MyHomePage(title: ""),
         ),
       );
 }
@@ -55,6 +65,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    super.initState();
+
+  }
+
   void _incrementCounter() {
     // setState(() {
     //   // This call to setState tells the Flutter framework that something has
@@ -64,6 +80,10 @@ class _MyHomePageState extends State<MyHomePage> {
     //   // called again, and so nothing would appear to happen.
     //   _counter++;
     // });
+    Future.delayed(const Duration(seconds: 3)).then((value) {
+      debugPrint("called change langauge");
+      Provider.of<AppHelper>(context, listen: false).changeLang();
+    });
     Provider.of<HomeProvider>(context, listen: false).increment();
   }
 
@@ -83,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text(S.of(context).demoHomePage),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -104,8 +124,8 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+            Text(
+              S.of(context).pushButtonManyTimes,
             ),
             Consumer<HomeProvider>(
               builder: (context, value, child) => Text(

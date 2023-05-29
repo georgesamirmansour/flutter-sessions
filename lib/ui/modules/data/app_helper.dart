@@ -13,8 +13,12 @@ class AppHelper with ChangeNotifier{
     return Future.value();
   }
 
-  Future<void> changeLang(String lang){
-    this.lang = lang;
+  Future<void> changeLang(){
+     if(lang == "ar") {
+       lang = "en";
+     } else {
+       lang = "ar";
+     }
     notifyListeners();
     return Future.value();
   }
